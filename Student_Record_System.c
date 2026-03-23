@@ -17,12 +17,12 @@ int main()
     {
         printf("\n---STUDENT RECORD SYSTEM---");
         printf("\n1. Add record \n2. Search record \n3. Delete record \n4. Display records \n5. Exit\n");
-        printf("Select your choice,(1,2,3,4,5): ");
+        printf("\nSelect your choice,(1,2,3,4,5): ");
         scanf(" %d", &choice);
         getchar();
         if (choice == 5)
         {
-            printf("You existed the system successfully, welcome again.");
+            printf("\nYou existed the system successfully, welcome again.\n");
             break;
         }
         switch(choice)
@@ -49,10 +49,13 @@ void addRecord()
     printf("Enter student's ID: ");
     scanf("%s", s.iD);
     rewind(studrecordsfile);
-    if(strcmp(temp.iD && s.iD) == 0)
+    while(fread(&temp, sizeof(Student), 1, studrecordsfile))
     {
-        isDuplicate = 1;
-        break;
+        if(strcmp(temp.iD, s.iD) == 0)
+        {
+            isDuplicate = 1;
+            break;
+        }
     }
     if(isDuplicate)
     {
@@ -76,7 +79,42 @@ void searchRecord()
 }
 void deleteRecord()
 {
-    printf("Feature coming up soon...\n");
+    Student s;
+    int found = 0;
+    char targetID[20];
+    FILE *studrecordsfile = fopen("studrecords.dat", "rb");
+    FILE *ftemp = fopen("temp.dat", "wb");
+    if (studrecordsfile == NULL)
+    {
+        printf("Error opening file!");
+        return;
+    }
+    printf("Enter student's ID to delete: ");
+    scanf("%s", targetID);
+    while(fread(&s, sizeof(Student), 1, studrecordsfile))
+    {
+        if(strcmp(s.iD, targetID) != 0)
+        {
+            fwrite(&s, sizeof(Student), 1, ftemp);
+        }
+        else
+        {
+            found = 1;
+        }
+    }
+    fclose(studrecordsfile);
+    fclose(ftemp);
+    if  (found)
+    {
+        remove("studrecords.dat");
+        rename("temp.dat", "studrecords.dat");
+        printf("Record deleted successfully!\n");
+    }
+    else
+    {
+        remove("temp.dat");
+        printf("Student ID NOT FOUND!\n");
+    }
 }
 void displayRecords()
 {
@@ -84,10 +122,10 @@ void displayRecords()
     FILE *studrecordsfile = fopen("studrecords.dat", "rb");
     if (studrecordsfile == NULL)
     {
-        printf("Error opening file! No records yet.");
+        printf("Error opening file! No records yet.\n");
         return;
     }
-    printf("<< STUDENT RECORD SYSTEM DISPLAY >>")
+    printf("\n<< STUDENT RECORD SYSTEM DISPLAY >>\n");
     printf("\n%-10s %-20s %-5s", "ID", "Name", "Gpa");
     printf("\n");
     while(fread(&s, sizeof(Student), 1, studrecordsfile) == 1)
