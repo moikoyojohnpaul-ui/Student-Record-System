@@ -38,8 +38,9 @@ int main()
 }
 void addRecord()
 {
-    Student s;
-    FILE *studrecordsfile = fopen("studrecords.dat", "ab");
+    Student s, temp;
+    int isDuplicate = 0;
+    FILE *studrecordsfile = fopen("studrecords.dat", "ab+");
     if (studrecordsfile == NULL)
     {
         printf("Error opening file!");
@@ -47,6 +48,18 @@ void addRecord()
     }
     printf("Enter student's ID: ");
     scanf("%s", s.iD);
+    rewind(studrecordsfile);
+    if(strcmp(temp.iD && s.iD) == 0)
+    {
+        isDuplicate = 1;
+        break;
+    }
+    if(isDuplicate)
+    {
+        printf("ERROR: Student ID %s already exists, try a different ID.\n", s.iD);
+        fclose(studrecordsfile);
+        return;
+    }
     getchar();
     printf("Enter student's name: ");
     fgets(s.name, sizeof(s.name), stdin);
