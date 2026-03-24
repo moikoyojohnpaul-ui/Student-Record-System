@@ -12,17 +12,18 @@ void searchRecord();
 void deleteRecord();
 void displayRecords();
 void updateRecords();
+void toUpper(char str[]);
 int main()
 {
     int choice;
     while(1)
     {
         printf("\n---STUDENT RECORD SYSTEM---");
-        printf("\n1. Add record \n2. Search record \n3. Delete record \n4. Display records \n5. Exit\n");
-        printf("\nSelect your choice,(1,2,3,4,5): ");
+        printf("\n1. Add record \n2. Search record \n3. Delete record \n4. Display records \n5. Update records \n6. Exit");
+        printf("\nSelect your choice,(1,2,3,4,5,6): ");
         scanf(" %d", &choice);
         getchar();
-        if (choice == 5)
+        if (choice == 6)
         {
             printf("\nYou existed the system successfully, welcome again.\n");
             break;
@@ -33,6 +34,7 @@ int main()
             case 2: searchRecord(); break;
             case 3: deleteRecord(); break;
             case 4: displayRecords(); break;
+            case 5: updateRecords(); break;
             default: printf("Invalid choice, try again!");
         }
     }
@@ -50,10 +52,7 @@ void addRecord()
     }
     printf("Enter student's ID: ");
     scanf("%s", s.iD);
-    for(int i = 0; s.iD[i] != '\0'; i++)
-    {
-        s.iD[i] = toupper(s.iD[i]);
-    }
+    toUpper(s.iD);
     rewind(studrecordsfile);
     while(fread(&temp, sizeof(Student), 1, studrecordsfile))
     {
@@ -92,10 +91,7 @@ void searchRecord()
     }
     printf("\nEnter the student's ID you wish to search for: ");
     scanf("%s", targetID);
-    for(int i = 0; targetID[i] != '\0'; i++)
-    {
-        targetID[i] = toupper(targetID[i]);
-    }
+    toUpper(targetID);
     while(fread(&s, sizeof(Student), 1, studrecordsfile))
     {
         if(strcmp(targetID, s.iD) == 0)
@@ -104,6 +100,7 @@ void searchRecord()
             break;
         }
     }
+    fclose(studrecordsfile);
     if(found)
     {
         printf("\n<< RECORD FOUND >>\n");
@@ -130,6 +127,7 @@ void deleteRecord()
     }
     printf("Enter student's ID to delete: ");
     scanf("%s", targetID);
+    toUpper(targetID);
     while(fread(&s, sizeof(Student), 1, studrecordsfile))
     {
         if(strcmp(s.iD, targetID) != 0)
@@ -175,5 +173,40 @@ void displayRecords()
 }
 void updateRecords()
 {
-    printf("Feaature coming soon...");
+    Student s;
+    int found = 0;
+    char targetID[20];
+    FILE *studrecordsfile = fopen("studrecords.dat", "rb+");
+    if (studrecordsfile == NULL)
+    {
+        printf("Error opening file!");
+        return;
+    }
+    printf("\nEnter the student's ID you wish to update his/her GPA: ");
+    scanf("%s", targetID);
+    toUpper(targetID);
+    while(fread(&s, sizeof(Student), 1, studrecordsfile))
+    {
+        if(strcmp(targetID, s.iD) == 0)
+        {
+            found = 1;
+            printf("\n%.2f is the old GPA, enter new GPA: ", s.gpa);
+            scanf("%f", &s.gpa);
+            fseek(studrecordsfile, -sizeof(Student), SEEK_CUR);
+            fwrite(&s, sizeof(Student), 1, studrecordsfile);
+            printf("Record updated successfully!\n");
+        }
+    }
+    if(!found)
+    {
+        printf("Record NOT FOUND!\n");
+    }
+    fclose(studrecordsfile);
+}
+void toUpper(char str[])
+{
+    for(int i = 0; str[i] != '\0'; i++)
+    {
+        str[i] = toupper(str[i]);
+    }
 }
