@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <ctype.h>
 typedef struct{
     char iD[20];
     char name[50];
@@ -10,6 +11,7 @@ void addRecord();
 void searchRecord();
 void deleteRecord();
 void displayRecords();
+void updateRecords();
 int main()
 {
     int choice;
@@ -48,6 +50,10 @@ void addRecord()
     }
     printf("Enter student's ID: ");
     scanf("%s", s.iD);
+    for(int i = 0; s.iD[i] != '\0'; i++)
+    {
+        s.iD[i] = toupper(s.iD[i]);
+    }
     rewind(studrecordsfile);
     while(fread(&temp, sizeof(Student), 1, studrecordsfile))
     {
@@ -75,7 +81,40 @@ void addRecord()
 }
 void searchRecord()
 {
-    printf("Feature coming up soon...\n");
+    Student s;
+    int found = 0;
+    char targetID[20];
+    FILE *studrecordsfile = fopen("studrecords.dat", "rb");
+    if (studrecordsfile == NULL)
+    {
+        printf("Error opening file!");
+        return;
+    }
+    printf("\nEnter the student's ID you wish to search for: ");
+    scanf("%s", targetID);
+    for(int i = 0; targetID[i] != '\0'; i++)
+    {
+        targetID[i] = toupper(targetID[i]);
+    }
+    while(fread(&s, sizeof(Student), 1, studrecordsfile))
+    {
+        if(strcmp(targetID, s.iD) == 0)
+        {
+            found = 1;
+            break;
+        }
+    }
+    if(found)
+    {
+        printf("\n<< RECORD FOUND >>\n");
+        printf("%-10s %-20s %-5s", "ID", "Name", "GPA");
+        printf("\n");
+        printf("%-10s %-20s %.2f\n", s.iD, s.name, s.gpa);
+    }
+    else
+    {
+        printf("Record of ID %s was not found!", targetID);
+    }
 }
 void deleteRecord()
 {
@@ -133,4 +172,8 @@ void displayRecords()
         printf("%-10s %-20s %.2f\n", s.iD, s.name, s.gpa);
     }
     fclose(studrecordsfile);
+}
+void updateRecords()
+{
+    printf("Feaature coming soon...");
 }
