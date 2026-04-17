@@ -7,3 +7,5 @@ FEATURES:
 2. Manages student records and grades
 3. Calculates mean and standard deviation
 4. Adds new records, delete records, search through records
+
+Have also included some other small projects, not related with the student record system though
